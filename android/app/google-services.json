@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "661562707949",
+    "project_id": "proyecto-iseneca-9f849",
+    "storage_bucket": "proyecto-iseneca-9f849.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661562707949:android:a87b2091e4faffa41fe1e4",
+        "android_client_info": {
+          "package_name": "es.iesjandula.iseneca"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv7W3YpRGGBoW0vOCMGC1c-KQbA4IivEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
