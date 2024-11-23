@@ -10,10 +10,11 @@ import 'package:iseneca/screens/convivencia/screen_expulsados.dart';
 import 'package:iseneca/screens/convivencia/comportamiento_alumno_screen.dart';
 import 'package:iseneca/screens/convivencia/carnet_screen.dart';
 import 'package:iseneca/screens/incidencias/incidencias_screen.dart';
+import 'package:iseneca/screens/incidencias/incidencias_screen_admin.dart';
+import 'package:iseneca/screens/incidencias/incidencias_screen_user.dart';
 import 'package:iseneca/screens/screens.dart';
 import 'package:iseneca/service/services.dart';
 import 'package:provider/provider.dart';
-
 
 //Main
 void main() async {
@@ -49,8 +50,12 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => DataProvider(), lazy: false,),
-       
+        // Provider incidencias.
+        ChangeNotifierProvider(
+          create: (_) => DataProvider(),
+          lazy: false,
+        ),
+
         ChangeNotifierProvider(
           create: (_) => CredencialesProvider(),
           lazy: false,
@@ -139,7 +144,12 @@ class MyApp extends StatelessWidget {
         "carnet_screen": (BuildContext context) => const CardScreen(),
         "incidencia_telefono_screen": (BuildContext context) =>
             const IncidenciaTelefonoScreen(),
-        "incidencias_screen": ( BuildContext context ) => const IncidenciasScreen()
+        "incidencias_screen": (BuildContext context) =>
+            const IncidenciasScreen(),
+        "incidencias_screen_user": (BuildContext context) =>
+            const IncidenciasScreenUser(),
+        "incidencias_screen_admin": (BuildContext context) =>
+            const IncidenciasScreenAdmin(),
       },
     );
   }

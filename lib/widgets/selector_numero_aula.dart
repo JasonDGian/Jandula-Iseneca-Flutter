@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:iseneca/providers/data_provider.dart';
 import 'package:provider/provider.dart';
 
-
 class SelectorNumeroAula extends StatefulWidget {
-  const SelectorNumeroAula({super.key, required this.funcion});
+  const SelectorNumeroAula({super.key, required this.controller});
 
   // Especificamos el tipo de la función
-  final Function(String) funcion;
+  final TextEditingController controller;
 
   @override
   _SelectorNumeroAulaState createState() => _SelectorNumeroAulaState();
@@ -35,9 +34,8 @@ class _SelectorNumeroAulaState extends State<SelectorNumeroAula> {
           onChanged: (nuevoValor) {
             setState(() {
               aulaSeleccionada = nuevoValor!;
+              widget.controller.text = nuevoValor;
             });
-            // llamada a la funcion pasada por parametro.
-            widget.funcion(nuevoValor!);
           },
         )
       ],

@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:iseneca/models/incidencia_dto.dart';
 import 'package:iseneca/providers/data_interaction.dart';
+import 'package:iseneca/shared/data/data_constants.dart';
 
 class DataProvider extends ChangeNotifier {
-
+  // En futuro sostituir por una llamada a microservicio que devuelve el listado de aulas disponibles.
   List<DropdownMenuItem<String>> entradasNumAula = const [
     DropdownMenuItem<String>(
         value: "default",
@@ -19,25 +19,94 @@ class DataProvider extends ChangeNotifier {
     DropdownMenuItem<String>(value: "0.5", child: Text("0.5")),
   ];
 
-  // DIO
+// Listado de botones seleccionables basado en constantes para filtro de busqueda.
+  List<DropdownMenuItem<String>> estadosIncidencia = const [
+    DropdownMenuItem<String>(
+        value: "default",
+        child: Text(
+          "Selección.",
+          style: TextStyle(color: Color.fromARGB(255, 151, 10, 0)),
+        )),
+    DropdownMenuItem<String>(
+        value: DataConstants.estadoCancelada,
+        child: Text(DataConstants.estadoCancelada)),
+    DropdownMenuItem<String>(
+        value: DataConstants.estadoPendiente,
+        child: Text(DataConstants.estadoPendiente)),
+    DropdownMenuItem<String>(
+        value: DataConstants.estadoEnProgreso,
+        child: Text(DataConstants.estadoEnProgreso)),
+    DropdownMenuItem<String>(
+        value: DataConstants.estadoResuelta,
+        child: Text(DataConstants.estadoResuelta)),
+  ];
+
+  // Instancia dio.
   DataInteraction dataInteraction = DataInteraction();
+
+  // Lista de usuarios administradores.
+  List<String> administradores = [
+    "davjasg@gmail.com"
+  ]; // añadir usuarios que deseamos incluir como administradores.
 
   // Almacen de incidencias en Provider.
   List<IncidenciaDto> incidencias = [];
 
-  // Metodo del provider que
+  // Metodo del provider que recupera incidenecias y las almacena en el provider.
   Future<void> buscaIncidencias() async {
     incidencias.clear();
     final respuesta = await dataInteraction.listaIncidencias();
 
     for (var x in respuesta) {
-      // introduce la primera recuperada (la ultima añadida) a la lista como priemr elemento.
+      // introduce la primera recuperada (la ultima añadida) a la lista como primer elemento.
       incidencias.insert(0, IncidenciaDto.fromJson(x));
     }
     notifyListeners();
   }
 
-  // Genearcion incidencias.
+  // Helper para añadir filtro no nulo.
+  void addFilter(Map<String, String> dataFilter, String key, String? value) {
+    if (value != null && value != "default" && value.isNotEmpty) {
+      dataFilter[key] = value;
+    }
+  }
+
+  // Metodo del provider que recupera incidenecias y las almacena en el provider basandose en el filtro.
+  Future<void> buscaIncidenciasFiltro(
+      String? estado,
+      String? usuario,
+      String? numAula,
+      String? descripcion,
+      String? fechaInicio,
+      String? fechaFin) async {
+    // Mapa que funge de json de busqueda.
+    Map<String, String> dataFilter = {};
+
+    addFilter(dataFilter, "estadoIncidencia", estado);
+    addFilter(dataFilter, "correoDocente", usuario);
+    addFilter(dataFilter, "numeroAula", numAula);
+    addFilter(dataFilter, "descripcionIncidencia", descripcion);
+    addFilter(dataFilter, "fechaInicio", fechaInicio);
+    addFilter(dataFilter, "fechaFin", fechaFin);
+
+    print("Filtro actual en PROVIDER:");
+    print(dataFilter);
+
+    // Limpia el listado actual.
+    incidencias.clear();
+
+    // Envia parametros a dio.
+    final respuesta = await dataInteraction.listaIncidenciasFiltro(dataFilter);
+
+    // Renderiza en orden inverso a medida que recibe.
+    for (var x in respuesta) {
+      incidencias.insert(0, IncidenciaDto.fromJson(x));
+    }
+
+    notifyListeners();
+  }
+
+  // Generacion incidencias.
   String numero = "";
   String usuario = "";
   String correo = "";
@@ -72,11 +141,15 @@ class DataProvider extends ChangeNotifier {
     _clearValues(); // limpia valores del provider.
   }
 
-  void recuperaUsuario( String? user, String? correo) {
+  void recuperaUsuario(String? user, String? correo) {
     usuario = user ?? "nulo en funcion";
     this.correo = correo ?? "nulo en funcion";
     notifyListeners();
   }
 
+  // Funcion que devuelve true o false dependiendo de si el usuario
+  // pertenece al a lista de administradores.
+  bool checkIfAdmin(String correo) {
+    return administradores.contains(correo);
+  }
 }
-

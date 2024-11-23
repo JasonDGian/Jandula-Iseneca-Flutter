@@ -1,10 +1,7 @@
-// Importamos el paquete dio.
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:iseneca/models/incidencia_dto.dart';
-
 import '../shared/data/data_constants.dart';
-
 
 class DataInteraction {
   final Dio dio = Dio(BaseOptions(
@@ -19,6 +16,34 @@ class DataInteraction {
   Future<List<dynamic>> listaIncidencias() async {
     try {
       final response = await dio.post("/incidencias", data: {});
+
+      // Si la API responde 200
+      if (response.statusCode == 201) {
+        debugPrint(response.toString());
+        return response.data;
+      }
+      if (response.statusCode == 200) {
+        debugPrint(response.toString());
+        return response.data;
+      }
+      debugPrint("Code returned not 200 nor 201");
+      return [];
+    } catch (error) {
+      debugPrint(error.toString());
+      return [];
+    }
+  }
+
+  Future<List<dynamic>> listaIncidenciasFiltro(
+      Map<String, String> dataFilter) async {
+    try {
+      print("Filtro actual en DIO:");
+      print(dataFilter);
+
+      final response = await dio.post(
+        "/incidencias",
+        data: dataFilter,
+      );
 
       // Si la API responde 200
       if (response.statusCode == 201) {
